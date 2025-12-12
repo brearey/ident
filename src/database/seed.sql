@@ -36,8 +36,3 @@ INSERT INTO "IDENT_Intervals" ("BranchId", "DoctorId", "StartDateTime", "LengthI
 INSERT INTO "IDENT_Intervals" ("BranchId", "DoctorId", "StartDateTime", "LengthInMinutes", "IsBusy") VALUES (1, 101, '2025-02-11 16:00:00', 30, false);
 INSERT INTO "IDENT_Intervals" ("BranchId", "DoctorId", "StartDateTime", "LengthInMinutes", "IsBusy") VALUES (2, 102, '2025-02-12 09:00:00', 45, false);
 INSERT INTO "IDENT_Intervals" ("BranchId", "DoctorId", "StartDateTime", "LengthInMinutes", "IsBusy") VALUES (3, 103, '2025-02-12 14:00:00', 120, false);
-
-SELECT * FROM "IDENT_Branches";
-SELECT * FROM "IDENT_Doctors";
-SELECT * FROM "IDENT_Tickets";
-SELECT * FROM "IDENT_Intervals" ORDER BY "BranchId", "DoctorId", "StartDateTime";

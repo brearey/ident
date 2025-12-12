@@ -11,7 +11,7 @@ const PORT = process.env.SERVER_PORT || 5100
 app.use(bodyParser.json())
 app.use(logger.request)
 
-app.get('/api/health', (req: Request, res: Response) => {
+app.get('/health', (req: Request, res: Response) => {
 	const response: ApiResponse = {
 		success: true,
 		message: 'ok',
@@ -21,6 +21,14 @@ app.get('/api/health', (req: Request, res: Response) => {
 	res.status(200).json(response)
 })
 
+app.get('/GetTickets', (req: Request, res: Response) => {
+  logger.info(`/GetTickets req.query.dateTimeFrom ${req.query.dateTimeFrom}`)
+  logger.info(`/GetTickets req.query.dateTimeTo ${req.query.dateTimeTo}`)
+  logger.info(`/GetTickets req.query.limit ${req.query.limit}`)
+  logger.info(`/GetTickets req.query.offset ${req.query.offset}`)
+	res.status(200).end('Some message')
+})
+
 app.listen(PORT, () => {
-	console.log(`Server running at http://localhost:${PORT}`)
+	logger.info(`Server running at http://localhost:${PORT}`)
 })
