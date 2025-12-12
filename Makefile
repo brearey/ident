@@ -3,9 +3,11 @@ include .env
 all:
 	npm run dev
 
-db_start:
-	docker compose down -v
+up:
 	docker compose up -d --build
+
+down:
+	docker compose down -v
 
 db_init:
 	psql -h localhost -d $(POSTGRES_DB) -U $(POSTGRES_USER) -f src/database/init.sql
