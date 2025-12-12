@@ -14,7 +14,7 @@ function createPool(host: string, user: string, password: string) {
   return pool
 }
 
-async function query(pool: Pool, q: string, params: [] = []) {
+async function query(pool: Pool, q: string, params: unknown[] = []) {
   try {
     return await pool.query(q, params)
   } catch (err) {
