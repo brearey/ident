@@ -7,7 +7,7 @@ export const logger = {
 	info: (message: string) => {
 		logger.instance.info(`${logger.now} | INFO | ${message}`)
 	},
-	error: (error: ApiError) => {
+	error: (error: ApiError | Error) => {
 		logger.instance.error(`${logger.now} | ERROR | ${error.name} ${error.message}`)
 	},
 	request: (req: Request, res: Response, next: NextFunction) => {
