@@ -7,6 +7,7 @@ import { logger } from './utils/logger'
 import { getTickets } from './models/ticket'
 import {createPool} from './database/db'
 import { checkAuth } from './middlewares/auth'
+import { upsertBranches, upsertDoctors, upsertIntervals } from './models/timetable'
 
 const app: Application = express()
 const PORT = process.env.SERVER_PORT || 5100
@@ -89,6 +90,68 @@ app.get('/GetTickets', logger.getTickets, checkAuth, async (req: Request, res: R
     
     res.status(200).json(tickets)
     
+  } catch (error) {
+    logger.error(error as Error)
+    res.status(500).send('Ошибка на сервере')
+  }
+})
+
+app.post('/PostTimeTable', logger.request, checkAuth, async (req: Request, res: Response) => {
+  try {
+    const { Doctors, Branches, Intervals } = req.body || {}
+
+    if (!Array.isArray(Doctors) || !Array.isArray(Branches) || !Array.isArray(Intervals)) {
+      return res.status(400).send('Поля Doctors, Branches, Intervals должны быть массивами')
+    }
+
+    for (const branch of Branches) {
+      if (typeof branch.Id !== 'number' || typeof branch.Name !== 'string') {
+        return res.status(400).send('Неверный формат Branches')
+      }
+    }
+
+    for (const doctor of Doctors) {
+      if (typeof doctor.Id !== 'number' || typeof doctor.Name !== 'string') {
+        return res.status(400).send('Неверный формат Doctors')
+      }
+    }
+
+    for (const interval of Intervals) {
+      const { BranchId, DoctorId, StartDateTime, LengthInMinutes, IsBusy } = interval
+      const parsedDate = new Date(StartDateTime)
+      if (
+        typeof BranchId !== 'number' ||
+        typeof DoctorId !== 'number' ||
+        typeof LengthInMinutes !== 'number' ||
+        typeof IsBusy !== 'boolean' ||
+        isNaN(parsedDate.getTime())
+      ) {
+        return res.status(400).send('Неверный формат Intervals или неверная дата')
+      }
+    }
+
+    const branchesResult = await upsertBranches(pool, Branches)
+    if (branchesResult === null) {
+      const msg = 'Ошибка сохранения филиалов'
+      logger.error(new Error(msg))
+      return res.status(500).send(msg)
+    }
+
+    const doctorsResult = await upsertDoctors(pool, Doctors)
+    if (doctorsResult === null) {
+      const msg = 'Ошибка сохранения докторов'
+      logger.error(new Error(msg))
+      return res.status(500).send(msg)
+    }
+
+    const intervalsResult = await upsertIntervals(pool, Intervals)
+    if (intervalsResult === null) {
+      const msg = 'Ошибка сохранения расписания'
+      logger.error(new Error(msg))
+      return res.status(500).send(msg)
+    }
+
+    return res.status(200).send('Данные успешно сохранены')
   } catch (error) {
     logger.error(error as Error)
     res.status(500).send('Ошибка на сервере')
