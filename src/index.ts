@@ -14,7 +14,8 @@ const app: Application = express()
 const PORT = process.env.SERVER_PORT || 5100
 let pool: Pool
 
-app.use(bodyParser.json())
+app.use(bodyParser.json({ limit: '50mb' }))
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 app.use(logger.request)
 
 app.get('/health', (req: Request, res: Response) => {
