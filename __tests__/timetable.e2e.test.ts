@@ -15,6 +15,11 @@ describe('POST /PostTimeTable (e2e)', () => {
     process.env.POSTGRES_PASSWORD as string,
   )
 
+  const headers = {
+    'IDENT-Integration-Key': IDENT_KEY,
+    'Content-Type': 'application/json',
+  }
+
   beforeAll(async () => {
     const maxAttempts = 10
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
@@ -86,6 +91,20 @@ describe('POST /PostTimeTable (e2e)', () => {
 
       expect(result?.rows[0]?.cnt).toBe(2)
     }
+  })
+
+  it('Получение списка заявок работает. Приходит массив', async () => {
+    const dateTimeFrom = new Date().toISOString()
+    const dateTimeTo = new Date('2026-01-01').toISOString()
+    
+    const limit = 500
+    const offset = 0
+    const getTicketsResult = await axios.get(
+      `${BASE_URL}/GetTickets?dateTimeFrom=${dateTimeFrom}&dateTimeTo=${dateTimeTo}&limit=${limit}&offset=${offset}`,
+      { headers }
+    )
+    expect(getTicketsResult.status).toBe(200)
+    expect(Array.isArray(getTicketsResult.data)).toBe(true)
   })
 })
 
