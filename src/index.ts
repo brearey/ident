@@ -150,14 +150,8 @@ app.post('/PostTimeTable', logger.request, checkAuth, async (req: Request, res: 
       }
 
       const intervalsResult = await upsertIntervals(pool, Intervals)
-      // TODO: debug
-      logger.info('intervalsResult = ' + JSON.stringify(intervalsResult))
       if (intervalsResult === null) {
         const msg = 'Ошибка сохранения расписания'
-        logger.error(new Error(msg))
-        return res.status(500).send(msg)
-      } else {
-        const msg = 'Ошибка в БД'
         logger.error(new Error(msg))
         return res.status(500).send(msg)
       }
