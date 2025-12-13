@@ -19,6 +19,7 @@ function createPool(host: string, user: string, password: string) {
     return pool
   } catch(e) {
     logger.error(e as Error)
+    return null
   }
 }
 
