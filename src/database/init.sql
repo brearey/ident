@@ -72,13 +72,13 @@ CREATE TABLE "IDENT_Intervals" (
 INSERT INTO "IDENT_Tickets"
 (
   "Id",
-  "DateAndTime",
+  "DateAndTime", -- Дата создания заявки
   "ClientPhone",
   "ClientEmail",
   "FormName",
   "ClientFullName",
-  "PlanStart",
-  "PlanEnd",
+  "PlanStart", -- Желаемое время начала приема (не должно быть позже PlanEnd).
+  "PlanEnd", -- Желаемое время окончания приема (не должно быть раньше PlanStart, а продолжительность приема не должна превышать 12 часов).
   "Comment",
   "DoctorId",
   "DoctorName",
@@ -87,7 +87,7 @@ INSERT INTO "IDENT_Tickets"
 )
 VALUES
 (
-  '550e8400-e29b-41d4-a716-446655440001',
+  '550e8400-e29b-41d4-a716-446655440002',
   now(),
   '+7 999 999-99-99',
   'ivanov@test.ru',
