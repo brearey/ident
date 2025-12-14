@@ -18,7 +18,7 @@ let pool: Pool
 
 app.use(
 	cors({
-		origin: 'http://localhost:8080',
+		origin: ['http://localhost:8080', 'http://176.109.105.218:8080'],
 		credentials: true,
 	})
 )
