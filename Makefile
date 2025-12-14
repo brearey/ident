@@ -5,16 +5,18 @@ all: up
 rebuild: down up
 
 restart:
-	docker compose stop app
-	docker compose rm -f app
-	docker compose up -d --build --no-deps app
-
-up:
-	docker compose up -d --build app database
-
-down:
 	docker compose stop app database
 	docker compose rm -f app database
+	docker compose up -d --build app database
+
+up:
+	docker compose up -d --build
+
+down:
+	docker compose down
+
+down-v:
+	docker compose down -v
 
 exec:
 	docker exec -it smmikod-app sh
