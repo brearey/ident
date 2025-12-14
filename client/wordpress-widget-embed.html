@@ -1,4 +1,4 @@
-<div class="ident-schedule" id="identSchedule">
+<div class="ident-schedule" id="identSchedule" data-api-url="http://176.109.105.218:5100">
 	<div class="ident-schedule-header">
 		<h2>Расписание врачей</h2>
 	</div>
@@ -100,7 +100,18 @@
 
 <script>
 	(function() {
-		const API_BASE_URL = 'http://localhost:5100';
+		const scheduleContainer = document.getElementById('identSchedule');
+		let API_BASE_URL = scheduleContainer?.getAttribute('data-api-url');
+		
+		if (!API_BASE_URL) {
+			const currentHost = window.location.hostname;
+			const currentPort = window.location.port;
+			if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
+				API_BASE_URL = 'http://localhost:5100';
+			} else {
+				API_BASE_URL = `http://${currentHost}:5100`;
+			}
+		}
 		
 		let doctors = [];
 		let branches = [];
@@ -108,9 +119,15 @@
 		async function identLoadDoctors() {
 			try {
 				const response = await fetch(`${API_BASE_URL}/GetDoctors`);
-				if (!response.ok) throw new Error('Ошибка загрузки врачей');
+				if (!response.ok) {
+					const errorText = await response.text();
+					throw new Error(`Ошибка загрузки врачей: ${response.status} ${errorText}`);
+				}
 				doctors = await response.json();
 				const select = document.getElementById('doctorFilter');
+				while (select.children.length > 1) {
+					select.removeChild(select.lastChild);
+				}
 				doctors.forEach(doctor => {
 					const option = document.createElement('option');
 					option.value = doctor.Id;
@@ -119,15 +136,25 @@
 				});
 			} catch (error) {
 				console.error('Ошибка загрузки врачей:', error);
+				const content = document.getElementById('scheduleContent');
+				if (content && !content.innerHTML.includes('Ошибка')) {
+					content.innerHTML = `<div class="ident-schedule-error">Ошибка подключения к API (${API_BASE_URL}). Проверьте, что сервер доступен.</div>`;
+				}
 			}
 		}
 
 		async function identLoadBranches() {
 			try {
 				const response = await fetch(`${API_BASE_URL}/GetBranches`);
-				if (!response.ok) throw new Error('Ошибка загрузки филиалов');
+				if (!response.ok) {
+					const errorText = await response.text();
+					throw new Error(`Ошибка загрузки филиалов: ${response.status} ${errorText}`);
+				}
 				branches = await response.json();
 				const select = document.getElementById('branchFilter');
+				while (select.children.length > 1) {
+					select.removeChild(select.lastChild);
+				}
 				branches.forEach(branch => {
 					const option = document.createElement('option');
 					option.value = branch.Id;

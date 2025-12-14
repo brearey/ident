@@ -106,7 +106,16 @@
 	</div>
 
 	<script>
-		const API_BASE_URL = 'http://localhost:5100';
+		let API_BASE_URL = document.getElementById('identSchedule')?.getAttribute('data-api-url');
+		
+		if (!API_BASE_URL) {
+			const currentHost = window.location.hostname;
+			if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
+				API_BASE_URL = 'http://localhost:5100';
+			} else {
+				API_BASE_URL = `http://${currentHost}:5100`;
+			}
+		}
 		
 		let doctors = [];
 		let branches = [];

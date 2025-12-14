@@ -34,9 +34,14 @@ GET /GetSchedule?dateTimeFrom=2025-12-20T00:00:00&dateTimeTo=2025-12-21T23:59:59
 2. Скопируйте всё содержимое файла
 3. В WordPress создайте новый блок "HTML" или "Custom HTML"
 4. Вставьте скопированный код
-5. **Важно:** Измените `API_BASE_URL` в JavaScript на адрес вашего сервера:
-   ```javascript
-   const API_BASE_URL = 'https://ваш-домен.com:5100';
+5. **Важно:** Адрес API определяется автоматически на основе текущего хоста. Если WordPress и API на одном сервере, виджет автоматически использует правильный адрес. Если нужно указать вручную, используйте атрибут `data-api-url`:
+   ```html
+   <div class="ident-schedule" id="identSchedule" data-api-url="http://ваш-api-сервер:5100">
+   ```
+   
+   **Пример для продакшна (если нужно указать вручную):**
+   ```html
+   <div class="ident-schedule" id="identSchedule" data-api-url="http://176.109.105.218:5100">
    ```
 
 ## Функциональность виджета
