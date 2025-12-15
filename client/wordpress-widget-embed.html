@@ -9,6 +9,11 @@
 		<select id="branchFilter">
 			<option value="">Все филиалы</option>
 		</select>
+		<select id="statusFilter">
+			<option value="free">Свободно</option>
+			<option value="busy">Занято</option>
+			<option value="">Все</option>
+		</select>
 		<input type="date" id="dateFrom" />
 		<input type="date" id="dateTo" />
 		<button onclick="identLoadSchedule()">Показать</button>
@@ -172,6 +177,7 @@
 
 			const doctorId = document.getElementById('doctorFilter').value;
 			const branchId = document.getElementById('branchFilter').value;
+			const statusFilter = document.getElementById('statusFilter').value;
 			const dateFrom = document.getElementById('dateFrom').value;
 			const dateTo = document.getElementById('dateTo').value;
 
@@ -193,7 +199,12 @@
 					const errorText = await response.text();
 					throw new Error(errorText || 'Ошибка загрузки расписания');
 				}
-				const intervals = await response.json();
+				let intervals = await response.json();
+				if (statusFilter === 'free') {
+					intervals = intervals.filter(interval => !interval.IsBusy);
+				} else if (statusFilter === 'busy') {
+					intervals = intervals.filter(interval => interval.IsBusy);
+				}
 				identDisplaySchedule(intervals);
 			} catch (error) {
 				content.innerHTML = `<div class="ident-schedule-error">Ошибка: ${error.message}</div>`;
@@ -256,6 +267,7 @@
 				identLoadBranches();
 				const today = new Date().toISOString().split('T')[0];
 				document.getElementById('dateFrom').value = today;
+				document.getElementById('statusFilter').value = 'free';
 				identLoadSchedule();
 			});
 		} else {
@@ -263,6 +275,7 @@
 			identLoadBranches();
 			const today = new Date().toISOString().split('T')[0];
 			document.getElementById('dateFrom').value = today;
+			document.getElementById('statusFilter').value = 'free';
 			identLoadSchedule();
 		}
 	})();
