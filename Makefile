@@ -1,5 +1,7 @@
 include .env
 
+PROD_HOST := http://176.109.105.218
+
 all: up
 
 rebuild: down up
@@ -46,7 +48,7 @@ test_tickets:
 
 test_tickets_prod:
 	curl -X GET \
-  "http://176.109.105.218:$(SERVER_PORT)/GetTickets?dateTimeFrom=2025-12-12T14%3a45%3a37%2b03%3a00&dateTimeTo=2025-12-30T14%3a45%3a37%2b03%3a00&limit=500&offset=0" \
+  "$(PROD_HOST):$(SERVER_PORT)/GetTickets?dateTimeFrom=2025-12-12T14%3a45%3a37%2b03%3a00&dateTimeTo=2025-12-30T14%3a45%3a37%2b03%3a00&limit=500&offset=0" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -H "IDENT-Integration-Key: $(IDENT_INTEGRATION_KEY)" \
@@ -59,6 +61,14 @@ test_timetable:
 	-H "Accept: application/json" \
 	-H "IDENT-Integration-Key: $(IDENT_INTEGRATION_KEY)" \
 	-d @__tests__/timetable.json
+
+test_post_timetable:
+	curl -X POST \
+	"$(PROD_HOST):$(SERVER_PORT)/PostTimeTable" \
+	-H "Content-Type: application/json" \
+	-H "Accept: application/json" \
+	-H "IDENT-Integration-Key: $(IDENT_INTEGRATION_KEY)" \
+	-d @__tests__/posttimetable.json
 
 fmt:
 	npm run lint
