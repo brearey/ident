@@ -68,36 +68,3 @@ CREATE TABLE "IDENT_Intervals" (
     CONSTRAINT "fk_intervals_doctor" FOREIGN KEY ("DoctorId") 
         REFERENCES "IDENT_Doctors"("Id") ON DELETE CASCADE
 );
-
-INSERT INTO "IDENT_Tickets"
-(
-  "Id",
-  "DateAndTime", -- Дата создания заявки
-  "ClientPhone",
-  "ClientEmail",
-  "FormName",
-  "ClientFullName",
-  "PlanStart", -- Желаемое время начала приема (не должно быть позже PlanEnd).
-  "PlanEnd", -- Желаемое время окончания приема (не должно быть раньше PlanStart, а продолжительность приема не должна превышать 12 часов).
-  "Comment",
-  "DoctorId",
-  "DoctorName",
-  "UtmSource",
-  "HttpReferer"
-)
-VALUES
-(
-  '550e8400-e29b-41d4-a716-446655440002',
-  now(),
-  '+7 999 999-99-99',
-  'ivanov@test.ru',
-  'ТЕСТ: Онлайн-запись с главной страницы',
-  'ТЕСТ: Иванов Иван Иванович',
-  '2025-12-18 09:00:00',
-  '2025-12-18 09:30:00',
-  'ТЕСТ: Болит верхний зуб справа',
-  101,
-  'ТЕСТ: Петров Петр Петрович',
-  'ТЕСТ: google',
-  'https://test.ru/'
-);
