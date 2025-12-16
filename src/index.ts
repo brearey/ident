@@ -6,6 +6,7 @@ import compression from 'compression'
 import cors from 'cors'
 import { ApiResponse } from './types/app-types'
 import { logger } from './utils/logger'
+import { httpLoggingMiddleware } from './middlewares/http-logger'
 import { createTicket, getTickets } from './models/ticket'
 import { createPool } from './database/db'
 import { checkAuth } from './middlewares/auth'
@@ -25,7 +26,7 @@ app.use(
 app.use(compression())
 app.use(bodyParser.json({ limit: '50mb' }))
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
-app.use(logger.request)
+app.use(httpLoggingMiddleware)
 
 app.get('/health', (req: Request, res: Response) => {
 	const response: ApiResponse = {
