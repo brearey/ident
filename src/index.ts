@@ -6,7 +6,7 @@ import compression from 'compression'
 import cors from 'cors'
 import { ApiResponse } from './types/app-types'
 import { logger } from './utils/logger'
-import { getTickets } from './models/ticket'
+import { createTicket, getTickets } from './models/ticket'
 import { createPool } from './database/db'
 import { checkAuth } from './middlewares/auth'
 import { upsertBranches, upsertDoctors, upsertIntervals, getDoctors, getBranches, getIntervals } from './models/timetable'
@@ -346,6 +346,94 @@ app.get('/GetBranches', async (req: Request, res: Response) => {
 	} catch (error) {
 		logger.error(error as Error)
 		res.status(500).send('Ошибка на сервере')
+	}
+})
+
+app.post('/BookTicket', async (req: Request, res: Response) => {
+	try {
+		if (!pool) {
+			const msg = 'База данных не инициализирована'
+			logger.error(new Error(msg))
+			return res.status(500).send(msg)
+		}
+
+		const {
+			BranchId,
+			DoctorId,
+			StartDateTime,
+			LengthInMinutes,
+			ClientPhone,
+			ClientEmail,
+			FormName,
+			ClientFullName,
+			ClientSurname,
+			ClientName,
+			ClientPatronymic,
+			Comment,
+			DoctorName,
+			UtmSource,
+			UtmMedium,
+			UtmCampaign,
+			UtmTerm,
+			UtmContent,
+			HttpReferer,
+		} = req.body || {}
+
+		if (
+			typeof BranchId !== 'number' ||
+			typeof DoctorId !== 'number' ||
+			typeof LengthInMinutes !== 'number' ||
+			LengthInMinutes <= 0 ||
+			LengthInMinutes > 720 ||
+			typeof StartDateTime !== 'string' ||
+			typeof ClientPhone !== 'string' ||
+			ClientPhone.trim() === ''
+		) {
+			return res.status(400).send('Неверные параметры')
+		}
+
+		const planStart = new Date(StartDateTime)
+		if (isNaN(planStart.getTime())) {
+			return res.status(400).send('Формат даты должен быть в ISO 8601')
+		}
+
+		const planEnd = new Date(planStart.getTime() + LengthInMinutes * 60000)
+		if (planEnd < planStart) {
+			return res.status(400).send('PlanEnd должен быть не раньше PlanStart')
+		}
+
+		const result = await createTicket(pool, {
+			BranchId,
+			DoctorId,
+			StartDateTime,
+			LengthInMinutes,
+			ClientPhone: ClientPhone.trim(),
+			ClientEmail,
+			FormName,
+			ClientFullName,
+			ClientSurname,
+			ClientName,
+			ClientPatronymic,
+			Comment,
+			DoctorName,
+			UtmSource,
+			UtmMedium,
+			UtmCampaign,
+			UtmTerm,
+			UtmContent,
+			HttpReferer,
+		})
+
+		if (result === null) {
+			const msg = 'Ошибка сохранения записи'
+			logger.error(new Error(msg))
+			return res.status(500).send(msg)
+		}
+
+		return res.status(200).send('Заявка принята')
+	} catch (error) {
+		logger.error(error as Error)
+		return res.status(500).send('Ошибка на сервере')
 	}
 })
 

@@ -27,3 +27,25 @@ export type IntervalDto = {
 	LengthInMinutes: number
 	IsBusy: boolean
 }
+
+export type CreateTicketDto = {
+	BranchId: number
+	DoctorId: number
+	StartDateTime: string
+	LengthInMinutes: number
+	ClientPhone: string
+	ClientEmail?: string
+	FormName?: string
+	ClientFullName?: string
+	ClientSurname?: string
+	ClientName?: string
+	ClientPatronymic?: string
+	Comment?: string
+	DoctorName?: string
+	UtmSource?: string
+	UtmMedium?: string
+	UtmCampaign?: string
+	UtmTerm?: string
+	UtmContent?: string
+	HttpReferer?: string
+}
