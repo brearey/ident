@@ -1,6 +1,6 @@
 include .env
 
-PROD_HOST := http://176.109.105.218
+PROD_HOST := http://ident.dentaplus-norilsk.ru
 
 all: up
 
