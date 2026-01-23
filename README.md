@@ -42,3 +42,14 @@ password i###T##3@
 ```bash
 ssh root@155.212.133.18
 ```
+
+## Setting up firewall with UFW
+
+- `dpkg -l ufw` проверить установку ufw
+- `sudo ufw allow OpenSSH` открыть стандартный порт 22 для ssh
+- `sudo ufw enable` включить ufw фаервол
+- `sudo ufw app list` посмотреть доступные правила для приложений
+- `sudo ufw allow 5100` открыть порт 5100 для доступа извне
+- `sudo ufw status numbered` получить нумерованный список правил
+- `sudo ufw delete N` удалить правило номер N
+- `sudo ufw disable` отключить ufw фаервол
