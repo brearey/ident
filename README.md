@@ -33,3 +33,12 @@ GET | /GetTickets | dateTimeFrom = 2025-12-16T00:00:00+07:00 | dateTimeTo =2200-
 7. Создать новый credentials для Ident
 8. Настроить страницу записи к стоматолоку dentaplus-norilsk.ru на новый домен `ident,dentaplus-norilsk.ru`
 9. на сервер настроить CORS
+
+# ident VPS
+ubuntu 24.04
+ssh key: home ubuntu pulbic key
+root@155.212.133.18
+password i###T##3@
+```bash
+ssh root@155.212.133.18
+```
