@@ -1,7 +1,7 @@
 services:
   database:
     image: postgres:16.10-alpine3.22
-    container_name: smmikod-db
+    container_name: ident-db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -21,7 +21,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: smmikod-app
+    container_name: ident-app
     environment:
       NODE_ENV: production
       SERVER_PORT: ${SERVER_PORT:-5100}

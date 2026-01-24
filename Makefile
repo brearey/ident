@@ -21,10 +21,10 @@ down-v:
 	docker compose down -v
 
 exec:
-	docker exec -it smmikod-app sh
+	docker exec -it ident-app sh
 
 exec-db:
-	docker exec -it smmikod-db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
+	docker exec -it ident-db psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
 
 logs:
 	docker compose logs -f || true

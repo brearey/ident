@@ -1,7 +1,7 @@
 {
-	"name": "smmikod",
+	"name": "ident",
 	"version": "1.0.0",
-	"description": "smmikod project",
+	"description": "ident project",
 	"main": "index.js",
 	"scripts": {
 		"build": "tsc --build",
