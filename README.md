@@ -157,3 +157,7 @@ PostgreSQL init process complete; ready for start up.
 Для выпуска сертификата на BitrixVM воспользуйтесь следующей инструкцией.
 
 В других случаях для автоматического выпуска сертификатов Let’s Encrypt на VPS вы также можете установить приложение Certbot. Инструкции по установке Certbot для различных конфигураций доступны на сайте [Certbot](https://certbot.eff.org/instructions).
+
+# Ident admin comp
+
+Anydesk 1 899 437 775
