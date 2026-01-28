@@ -1,25 +1,24 @@
-<div class="ident-schedule" id="identSchedule"
-  data-api-url="https://ident.dentaplus-norilsk.ru">
-  <div class="ident-schedule-header">
-    <h2>Расписание врачей</h2>
-  </div>
-  <div class="ident-schedule-filters">
-    <select id="doctorFilter">
-      <option value>Все врачи</option>
-    </select>
-    <select id="branchFilter">
-      <option value>Все филиалы</option>
-    </select>
-    <select id="statusFilter">
-      <option value="free">Свободно</option>
-      <option value="busy">Занято</option>
-      <option value>Все</option>
-    </select>
-    <input type="date" id="dateFrom" />
-    <input type="date" id="dateTo" />
-    <button onclick="identLoadSchedule()">Показать</button>
-  </div>
-  <div id="scheduleContent"></div>
+<div class="ident-schedule" id="identSchedule" data-api-url="https://ident.dentaplus-norilsk.ru">
+	<div class="ident-schedule-header">
+		<h2>Расписание врачей</h2>
+	</div>
+	<div class="ident-schedule-filters">
+		<select id="doctorFilter">
+			<option value="">Все врачи</option>
+		</select>
+		<select id="branchFilter">
+			<option value="">Все филиалы</option>
+		</select>
+		<select id="statusFilter">
+			<option value="free">Свободно</option>
+			<option value="busy">Занято</option>
+			<option value="">Все</option>
+		</select>
+		<input type="date" id="dateFrom" />
+		<input type="date" id="dateTo" />
+		<button onclick="identLoadSchedule()">Показать</button>
+	</div>
+	<div id="scheduleContent"></div>
 </div>
 
 <style>
@@ -118,79 +117,6 @@
 		background-color: #9e9e9e;
 		cursor: not-allowed;
 	}
-  /* ===== MOBILE ADAPTIVE ===== */
-  @media (max-width: 768px) {
-
-    .ident-schedule {
-      padding: 10px;
-    }
-
-    .ident-schedule-header h2 {
-      font-size: 20px;
-    }
-
-    .ident-schedule-filters {
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .ident-schedule-filters select,
-    .ident-schedule-filters input,
-    .ident-schedule-filters button {
-      width: 100%;
-      font-size: 16px;
-      padding: 10px 12px;
-    }
-
-    /* Таблицу превращаем в карточки */
-    .ident-schedule-table,
-    .ident-schedule-table thead,
-    .ident-schedule-table tbody,
-    .ident-schedule-table th,
-    .ident-schedule-table tr {
-      display: block;
-    }
-
-    .ident-schedule-table thead {
-      display: none;
-    }
-
-    .ident-schedule-table tr {
-      background: #fff;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      padding: 12px;
-    }
-
-    .ident-schedule-table td {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      border: none;
-      font-size: 14px;
-    }
-
-    .ident-schedule-table td::before {
-      content: attr(data-label);
-      font-weight: 600;
-      color: #555;
-      margin-right: 10px;
-    }
-
-    .ident-schedule-book {
-      width: 100%;
-      padding: 10px;
-      font-size: 15px;
-      margin-top: 10px;
-    }
-
-    .action-th {
-      display: none;
-    }
-  }
-
 </style>
 
 <script>
@@ -316,7 +242,7 @@
 			html += '<th>Дата и время</th>';
 			html += '<th>Длительность</th>';
 			html += '<th>Статус</th>';
-			html += '<th class="action-th">Действие</th>';
+			html += '<th>Действие</th>';
 			html += '</tr></thead><tbody>';
 
 			intervals.forEach((interval, idx) => {
@@ -330,26 +256,19 @@
 					hour: '2-digit',
 					minute: '2-digit'
 				});
-        const isMobile = window.innerWidth <= 600
 				const statusClass = interval.IsBusy ? 'ident-schedule-busy' : 'ident-schedule-free';
 				const statusText = interval.IsBusy ? 'Занято' : 'Свободно';
 				const actionCell = interval.IsBusy
-          ? '<td data-label="Действие"><button class="ident-schedule-book" disabled>Недоступно</button></td>'
-          : `<td data-label="Действие"><button class="ident-schedule-book" data-idx="${idx}">Запись</button></td>`;
-        
-        const actionCellMobile = interval.IsBusy
-          ? '<td><button class="ident-schedule-book" disabled>Недоступно</button></td>'
-          : `<td><button class="ident-schedule-book" data-idx="${idx}">Запись</button></td>`;
-
+					? '<td>Недоступно</td>'
+					: `<td><button class="ident-schedule-book" data-idx="${idx}">Запись</button></td>`;
 
 				html += '<tr>';
-				html += `<td data-label="Филиал">${identEscapeHtml(interval.BranchName)}</td>`;
-				html += `<td data-label="Врач">${identEscapeHtml(interval.DoctorName)}</td>`;
-				html += `<td data-label="Дата и время">${dateStr} ${timeStr}</td>`;
-				html += `<td data-label="Длительность">${interval.LengthInMinutes} мин</td>`;
-				html += `<td data-label="Статус" class="${statusClass}">${statusText}</td>`;
-
-				html += isMobile ? actionCellMobile : actionCell;
+				html += `<td>${identEscapeHtml(interval.BranchName)}</td>`;
+				html += `<td>${identEscapeHtml(interval.DoctorName)}</td>`;
+				html += `<td>${dateStr} ${timeStr}</td>`;
+				html += `<td>${interval.LengthInMinutes} мин</td>`;
+				html += `<td class="${statusClass}">${statusText}</td>`;
+				html += actionCell;
 				html += '</tr>';
 			});
 
