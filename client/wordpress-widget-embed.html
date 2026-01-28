@@ -20,6 +20,11 @@
     <button onclick="identLoadSchedule()">Показать</button>
   </div>
   <div id="scheduleContent"></div>
+  <div id="schedulePagination" style="display:none; margin-top:20px; text-align:center;">
+    <button id="prevPage" disabled>← Назад</button>
+    <span id="pageInfo" style="margin:0 12px;"></span>
+    <button id="nextPage">Вперёд →</button>
+  </div>
 </div>
 
 <style>
@@ -190,6 +195,19 @@
       display: none;
     }
   }
+  #schedulePagination button {
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #schedulePagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
 
 </style>
 
@@ -210,6 +228,10 @@
 		
 		let doctors = [];
 		let branches = [];
+    let currentPage = 1
+    const pageSize = 10 // сколько интервалов на страницу
+    let lastIntervalsCount = 0
+
 
 		async function identLoadDoctors() {
 			try {
@@ -262,6 +284,11 @@
 		}
 
 		window.identLoadSchedule = async function() {
+      if (window.__identFilterChanged) {
+        currentPage = 1
+        window.__identFilterChanged = false
+      }
+
 			const content = document.getElementById('scheduleContent');
 			content.innerHTML = '<div class="ident-schedule-loading">Загрузка...</div>';
 
@@ -284,18 +311,24 @@
 			}
 
 			try {
+        const offset = (currentPage - 1) * pageSize
+        params.append('limit', pageSize)
+        params.append('offset', offset)
+
 				const response = await fetch(`${API_BASE_URL}/GetSchedule?${params.toString()}`);
 				if (!response.ok) {
 					const errorText = await response.text();
 					throw new Error(errorText || 'Ошибка загрузки расписания');
 				}
 				let intervals = await response.json();
+        lastIntervalsCount = intervals.length
 				if (statusFilter === 'free') {
 					intervals = intervals.filter(interval => !interval.IsBusy);
 				} else if (statusFilter === 'busy') {
 					intervals = intervals.filter(interval => interval.IsBusy);
 				}
 				identDisplaySchedule(intervals);
+        updatePagination()
 			} catch (error) {
 				content.innerHTML = `<div class="ident-schedule-error">Ошибка: ${error.message}</div>`;
 			}
@@ -363,6 +396,33 @@
 				btn.addEventListener('click', () => identBook(interval));
 			});
 		}
+
+    function updatePagination() {
+      const pagination = document.getElementById('schedulePagination')
+      const prevBtn = document.getElementById('prevPage')
+      const nextBtn = document.getElementById('nextPage')
+      const pageInfo = document.getElementById('pageInfo')
+
+      pagination.style.display = 'block'
+      pageInfo.textContent = `Страница ${currentPage}`
+
+      prevBtn.disabled = currentPage === 1
+      nextBtn.disabled = lastIntervalsCount < pageSize
+    }
+
+    document.getElementById('prevPage').addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--
+        identLoadSchedule()
+      }
+    })
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+      if (lastIntervalsCount === pageSize) {
+        currentPage++
+        identLoadSchedule()
+      }
+    })
 
 		function identEscapeHtml(text) {
 			const div = document.createElement('div');
@@ -433,6 +493,14 @@
 				document.getElementById('dateFrom').value = today;
 				document.getElementById('statusFilter').value = 'free';
 				identLoadSchedule();
+        // вешаем флаг на фильтры
+        ['doctorFilter','branchFilter','statusFilter','dateFrom','dateTo']
+        .forEach(id => {
+          document.getElementById(id).addEventListener('change', () => {
+            window.__identFilterChanged = true
+          })
+        })
+
 			});
 		} else {
 			identLoadDoctors();
