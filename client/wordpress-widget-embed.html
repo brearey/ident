@@ -314,6 +314,7 @@
         const offset = (currentPage - 1) * pageSize
         params.append('limit', pageSize)
         params.append('offset', offset)
+        params.append('status', statusFilter)
 
 				const response = await fetch(`${API_BASE_URL}/GetSchedule?${params.toString()}`);
 				if (!response.ok) {
@@ -322,7 +323,6 @@
 				}
 				let intervals = await response.json();
         lastIntervalsCount = intervals.length
-				if (statusFilter) params.append('status', statusFilter)
 				identDisplaySchedule(intervals);
         updatePagination()
 			} catch (error) {
