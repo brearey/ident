@@ -91,37 +91,55 @@ async function getIntervals(
 	dateTimeFrom?: Date,
 	dateTimeTo?: Date,
 	doctorId?: number,
-	branchId?: number
+	branchId?: number,
+	offset?: number,
+	limit?: number
 ) {
 	const conditions: string[] = []
 	const params: unknown[] = []
 	let paramIndex = 1
 
 	if (dateTimeFrom) {
-		conditions.push(`"StartDateTime" >= $${paramIndex}`)
+		conditions.push(`i."StartDateTime" >= $${paramIndex}`)
 		params.push(dateTimeFrom)
 		paramIndex++
 	}
 
 	if (dateTimeTo) {
-		conditions.push(`"StartDateTime" <= $${paramIndex}`)
+		conditions.push(`i."StartDateTime" <= $${paramIndex}`)
 		params.push(dateTimeTo)
 		paramIndex++
 	}
 
 	if (doctorId !== undefined) {
-		conditions.push(`"DoctorId" = $${paramIndex}`)
+		conditions.push(`i."DoctorId" = $${paramIndex}`)
 		params.push(doctorId)
 		paramIndex++
 	}
 
 	if (branchId !== undefined) {
-		conditions.push(`"BranchId" = $${paramIndex}`)
+		conditions.push(`i."BranchId" = $${paramIndex}`)
 		params.push(branchId)
 		paramIndex++
 	}
 
-	const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''
+	const whereClause =
+		conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''
+
+	/* ===== Pagination ===== */
+	let paginationClause = ''
+
+	if (typeof limit === 'number' && limit > 0) {
+		paginationClause += ` LIMIT $${paramIndex}`
+		params.push(Math.min(limit, 100)) // защита от злоупотреблений
+		paramIndex++
+
+		if (typeof offset === 'number' && offset >= 0) {
+			paginationClause += ` OFFSET $${paramIndex}`
+			params.push(offset)
+			paramIndex++
+		}
+	}
 
 	const sql = `
 		SELECT 
@@ -130,16 +148,18 @@ async function getIntervals(
 			i."StartDateTime",
 			i."LengthInMinutes",
 			i."IsBusy",
-			d."Name" as "DoctorName",
-			b."Name" as "BranchName"
+			d."Name" AS "DoctorName",
+			b."Name" AS "BranchName"
 		FROM "IDENT_Intervals" i
 		INNER JOIN "IDENT_Doctors" d ON i."DoctorId" = d."Id"
 		INNER JOIN "IDENT_Branches" b ON i."BranchId" = b."Id"
 		${whereClause}
 		ORDER BY i."StartDateTime" ASC
+		${paginationClause}
 	`
 
 	return await query(pool, sql, params)
 }
+
 
 export { upsertBranches, upsertDoctors, upsertIntervals, getDoctors, getBranches, getIntervals }

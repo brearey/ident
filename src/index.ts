@@ -233,11 +233,15 @@ app.get('/GetSchedule', async (req: Request, res: Response) => {
 		const dateTimeToStr = req.query.dateTimeTo as string | undefined
 		const doctorIdStr = req.query.doctorId as string | undefined
 		const branchIdStr = req.query.branchId as string | undefined
+    const offsetStr = req.query.offset as string | undefined
+    const limitStr = req.query.limit as string | undefined
 
 		let dateTimeFrom: Date | undefined
 		let dateTimeTo: Date | undefined
 		let doctorId: number | undefined
 		let branchId: number | undefined
+		let offset: number | undefined
+		let limit: number | undefined
 
 		if (dateTimeFromStr) {
 			dateTimeFrom = new Date(decodeURIComponent(dateTimeFromStr))
@@ -267,7 +271,21 @@ app.get('/GetSchedule', async (req: Request, res: Response) => {
 			}
 		}
 
-		const intervalsResult = await getIntervals(pool, dateTimeFrom, dateTimeTo, doctorId, branchId)
+    if (offsetStr) {
+			offset = parseInt(offsetStr, 10)
+			if (isNaN(offset)) {
+				return res.status(400).send('offset должен быть числом')
+			}
+		}
+
+    if (limitStr) {
+			limit = parseInt(limitStr, 10)
+			if (isNaN(limit)) {
+				return res.status(400).send('limit должен быть числом')
+			}
+		}
+
+		const intervalsResult = await getIntervals(pool, dateTimeFrom, dateTimeTo, doctorId, branchId, offset, limit)
 		if (intervalsResult === null) {
 			const msg = 'Ошибка в БД'
 			logger.error(new Error(msg))
