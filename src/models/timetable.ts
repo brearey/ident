@@ -93,7 +93,8 @@ async function getIntervals(
 	doctorId?: number,
 	branchId?: number,
 	offset?: number,
-	limit?: number
+	limit?: number,
+	status?: boolean
 ) {
 	const conditions: string[] = []
 	const params: unknown[] = []
@@ -120,6 +121,12 @@ async function getIntervals(
 	if (branchId !== undefined) {
 		conditions.push(`i."BranchId" = $${paramIndex}`)
 		params.push(branchId)
+		paramIndex++
+	}
+
+  if (status !== undefined) {
+		conditions.push(`i."IsBusy" = $${paramIndex}`)
+		params.push(status)
 		paramIndex++
 	}
 

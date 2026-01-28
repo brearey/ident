@@ -72,7 +72,7 @@ test_post_timetable:
 
 test_schedule:
 	curl -X GET \
-  "http://localhost:$(SERVER_PORT)/GetSchedule?dateTimeFrom=2025-12-12T14%3a45%3a37%2b03%3a00&dateTimeTo=2025-12-30T14%3a45%3a37%2b03%3a00&limit=500&offset=0" \
+  "http://localhost:$(SERVER_PORT)/GetSchedule?dateTimeFrom=2025-12-12T14%3a45%3a37%2b03%3a00&dateTimeTo=2025-12-30T14%3a45%3a37%2b03%3a00&limit=500&offset=0&status=busy" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -H "IDENT-Integration-Key: $(IDENT_INTEGRATION_KEY)" \

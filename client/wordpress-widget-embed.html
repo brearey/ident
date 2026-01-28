@@ -322,11 +322,7 @@
 				}
 				let intervals = await response.json();
         lastIntervalsCount = intervals.length
-				if (statusFilter === 'free') {
-					intervals = intervals.filter(interval => !interval.IsBusy);
-				} else if (statusFilter === 'busy') {
-					intervals = intervals.filter(interval => interval.IsBusy);
-				}
+				if (statusFilter) params.append('status', statusFilter)
 				identDisplaySchedule(intervals);
         updatePagination()
 			} catch (error) {

@@ -235,6 +235,7 @@ app.get('/GetSchedule', async (req: Request, res: Response) => {
 		const branchIdStr = req.query.branchId as string | undefined
     const offsetStr = req.query.offset as string | undefined
     const limitStr = req.query.limit as string | undefined
+    const statusStr = req.query.status as string | undefined
 
 		let dateTimeFrom: Date | undefined
 		let dateTimeTo: Date | undefined
@@ -242,6 +243,7 @@ app.get('/GetSchedule', async (req: Request, res: Response) => {
 		let branchId: number | undefined
 		let offset: number | undefined
 		let limit: number | undefined
+		let status: boolean | undefined
 
 		if (dateTimeFromStr) {
 			dateTimeFrom = new Date(decodeURIComponent(dateTimeFromStr))
@@ -285,7 +287,20 @@ app.get('/GetSchedule', async (req: Request, res: Response) => {
 			}
 		}
 
-		const intervalsResult = await getIntervals(pool, dateTimeFrom, dateTimeTo, doctorId, branchId, offset, limit)
+    if (statusStr) {
+      if (statusStr === "busy") {
+        status = true
+      } else if (statusStr === "free") {
+        status = false
+      } else {
+        return res.status(400).send('status должен быть free or busy')
+      }
+			if (typeof status !== "boolean") {
+				return res.status(400).send('status должен быть free or busy')
+			}
+		}
+
+		const intervalsResult = await getIntervals(pool, dateTimeFrom, dateTimeTo, doctorId, branchId, offset, limit, status)
 		if (intervalsResult === null) {
 			const msg = 'Ошибка в БД'
 			logger.error(new Error(msg))
