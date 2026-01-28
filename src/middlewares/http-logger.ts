@@ -15,7 +15,7 @@ export function httpLoggingMiddleware(req: Request, res: Response, next: NextFun
 	const clientIp = getClientIp(req)
 
 	console.info(
-		`${now.toLocaleString()} | method: ${req.method} | path: ${req.path} | from IP: ${clientIp} | user-agent: ${req.headers['user-agent']}`
+		`${now.toLocaleString()} | method: ${req.method} | path: ${req.host}${req.path} | from IP: ${clientIp} | user-agent: ${req.headers['user-agent']}`
 	)
 	next()
 }
